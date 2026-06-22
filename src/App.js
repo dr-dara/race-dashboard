@@ -3,7 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, BarChart, Bar, AreaChart, Area, Cell
 } from 'recharts';
-import { TrendingUp, Users, Timer, Trophy, Rocket, Activity } from 'lucide-react';
+import { TrendingUp, Users, Timer, Trophy, Rocket, Activity, Scale } from 'lucide-react';
 import Papa from 'papaparse';
 import './App.css';
 
@@ -199,6 +199,35 @@ function App() {
       .filter(stat => stat.isImprovement)
       .sort((a, b) => b.improvement - a.improvement);
   }, [runners, raceData]);
+
+  const paceConsistency = useMemo(() => {
+    return runners.map(runner => {
+      const runnerRecords = raceData
+        .filter(d => d.runner === runner)
+        .sort((a, b) => a.year - b.year);
+      if (runnerRecords.length < 2) return null;
+
+      const paces = runnerRecords.map(d => d.paceInSeconds);
+      const mean = paces.reduce((sum, p) => sum + p, 0) / paces.length;
+      const variance = paces.reduce((sum, p) => sum + (p - mean) ** 2, 0) / paces.length;
+      const stdDev = Math.sqrt(variance);
+
+      return {
+        runner,
+        stdDev,
+        meanPace: mean,
+        minPace: Math.min(...paces),
+        maxPace: Math.max(...paces),
+        raceCount: runnerRecords.length,
+        yearSpan: `${runnerRecords[0].year}–${runnerRecords[runnerRecords.length - 1].year}`,
+        records: runnerRecords
+      };
+    })
+      .filter(Boolean)
+      .sort((a, b) => a.stdDev - b.stdDev);
+  }, [runners, raceData]);
+
+  const conservativeManagementWinner = paceConsistency[0] ?? null;
 
   const handleRunnerToggle = (runner) => {
     const newSelected = new Set(selectedRunners);
@@ -433,6 +462,54 @@ function App() {
               ))}
             </LineChart>
           </ResponsiveContainer>
+        </div>
+
+        <div className="card award-section">
+          <h3 className="card-title"><Scale size={18} /> Award for Conservative Management</h3>
+          <p className="award-description">
+            Presented to the runner with the most consistent pace over the years — steady, reliable, and unflappable.
+          </p>
+          {conservativeManagementWinner ? (
+            <div className="award-winner">
+              <div className="award-winner-header">
+                <div className="award-medal">🏅</div>
+                <div>
+                  <div className="award-winner-name">{conservativeManagementWinner.runner}</div>
+                  <div className="award-winner-sub">
+                    {conservativeManagementWinner.raceCount} races · {conservativeManagementWinner.yearSpan}
+                  </div>
+                </div>
+              </div>
+              <div className="award-stats">
+                <div className="award-stat">
+                  <span className="award-stat-label">Average pace</span>
+                  <span className="award-stat-value">{secondsToPace(conservativeManagementWinner.meanPace, paceUnit)}</span>
+                </div>
+                <div className="award-stat">
+                  <span className="award-stat-label">Pace range</span>
+                  <span className="award-stat-value">
+                    {secondsToPace(conservativeManagementWinner.minPace, paceUnit)} – {secondsToPace(conservativeManagementWinner.maxPace, paceUnit)}
+                  </span>
+                </div>
+                <div className="award-stat">
+                  <span className="award-stat-label">Variation</span>
+                  <span className="award-stat-value">± {secondsToPace(conservativeManagementWinner.stdDev, paceUnit)}</span>
+                </div>
+              </div>
+              {paceConsistency.length > 1 && (
+                <div className="award-runners-up">
+                  <span className="award-runners-up-label">Also in the running:</span>
+                  {paceConsistency.slice(1, 4).map((entry) => (
+                    <span key={entry.runner} className="award-runner-up">
+                      {entry.runner} (± {secondsToPace(entry.stdDev, paceUnit)})
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="muted-text">At least two race results are needed to crown a consistency champion.</p>
+          )}
         </div>
 
         <div className="improvement-grid">
