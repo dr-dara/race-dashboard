@@ -87,6 +87,13 @@ License: MIT
  * LICENSE file in the root directory of this source tree.
  */
 
+/**
+ * @license lucide-react v0.523.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
 /** @license React v17.0.2
  * react-is.production.min.js
  *
