@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/race-dashboard/static/css/main.9121a43b.css",
-    "main.js": "/race-dashboard/static/js/main.74cbaf90.js",
+    "main.css": "/race-dashboard/static/css/main.d7d908bb.css",
+    "main.js": "/race-dashboard/static/js/main.ca229985.js",
     "static/js/453.067537d2.chunk.js": "/race-dashboard/static/js/453.067537d2.chunk.js",
     "index.html": "/race-dashboard/index.html",
-    "main.9121a43b.css.map": "/race-dashboard/static/css/main.9121a43b.css.map",
-    "main.74cbaf90.js.map": "/race-dashboard/static/js/main.74cbaf90.js.map",
+    "main.d7d908bb.css.map": "/race-dashboard/static/css/main.d7d908bb.css.map",
+    "main.ca229985.js.map": "/race-dashboard/static/js/main.ca229985.js.map",
     "453.067537d2.chunk.js.map": "/race-dashboard/static/js/453.067537d2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9121a43b.css",
-    "static/js/main.74cbaf90.js"
+    "static/css/main.d7d908bb.css",
+    "static/js/main.ca229985.js"
   ]
 }
